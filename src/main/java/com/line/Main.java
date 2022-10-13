@@ -14,7 +14,7 @@ public class Main {
 
         System.out.println(hospitals.size());
         for(Hospital hospital : hospitals){
-            System.out.println(hospital.getId());
+            System.out.println(hospital.getSqlInsertQuery());
         }
     }
 }
