@@ -54,6 +54,13 @@ public class Hospital {
     }
 
     public String getSubdivision() {
+        String[] sublist = { "외과","내과", "소아", "피부", "성형", "정형외과", "척추", "교정", "산부인과",
+                "관절", "봉합", "화상", "골절", "영유아", "안과", "가정의학과", "비뇨기과", "치과"};
+        for(String s : sublist){
+            if(this.subdivision.contains(s)){
+                this.subdivision = s;
+            }
+        }
         return subdivision;
     }
 
