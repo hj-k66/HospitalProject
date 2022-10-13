@@ -10,7 +10,7 @@ public class Hospital {
     private String subdivision;
 
     public Hospital(String id) {
-        this.id = id;
+        this.id = id.replaceAll("\"", "");
     }
 
     public String getId() {
