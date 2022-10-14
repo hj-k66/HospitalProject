@@ -23,10 +23,14 @@ public class Hospital {
         this.subdivision = subdivision;
         this.setDistrict();
     }
-
+//    public String getsqlInsertStructure(){
+//        String sql = "INSERT INTO `likelion-db`.`seoul_hospital`\n" +
+//                "(`id`,`address``district`,`category`,`emergency_room`,`name`,`subdivision`)\n";
+//        return sql;
+//    }
     public String getSqlInsertQuery() {
         String sql = String.format("INSERT INTO `likelion-db`.`seoul_hospital`\n" +
-                        "(`id`,`address``district`,`category`,`emergency_room`,`name`,`subdivision`)\n" +
+                        "(`id`,`address`,`district`,`category`,`emergency_room`,`name`,`subdivision`)\n" +
         "VALUES\n" +
                 "(\"%s\",\n" +
                 "\"%s\",\n" +
@@ -34,7 +38,7 @@ public class Hospital {
                 "\"%s\",\n" +
                 "%d,\n" +
                 "\"%s\",\n" +
-                "%s);\n", this.id, this.address, this.district, this.category, this.emergencyRoom, this.name, this.subdivision);
+                "\"%s\");\n", this.id, this.address, this.district, this.category, this.emergencyRoom, this.name, this.subdivision);
         return sql;
     }
 
