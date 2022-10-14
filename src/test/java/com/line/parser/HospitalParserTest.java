@@ -45,7 +45,7 @@ class HospitalParserTest {
     }
 
     @Test
-    @DisplayName("Make insert query")
+    @DisplayName("insert query 테스트")
     void makeSqlQueryTest(){
         HospitalParser hospitalParser = new HospitalParser();
         Hospital hospital = hospitalParser.parse(this.line1);
