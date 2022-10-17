@@ -1,9 +1,6 @@
 package com.dbexercise;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Map;
 
 public class UserDao2 {
@@ -17,12 +14,16 @@ public class UserDao2 {
 
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id,name,password) values(?,?,?)"); //sql문 템플릿
-        ps.setString(1,"1");
-        ps.setString(2,"heejeong");
-        ps.setString(3,"11111");
+        PreparedStatement ps = conn.prepareStatement("SELECT * from users where id = ?"); //sql문 템플릿
+        ps.setString(1,"0");
 
-        ps.executeUpdate(); //Mysql workbench에서 ctrl + enter와 유사
+        ResultSet resultSet = ps.executeQuery();
+        while(resultSet.next()){
+            String id = resultSet.getString("id");
+            String name = resultSet.getString("name");
+            String password = resultSet.getString("password");
+            System.out.printf("id : %s, name : %s, password : %s", id,name,password);
+        }
         //connection끊기
         ps.close();
         conn.close();
