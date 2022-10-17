@@ -5,8 +5,11 @@ import com.line.FileController;
 import com.line.domain.Hospital;
 import com.line.parser.HospitalParser;
 
+import java.awt.desktop.UserSessionListener;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -69,12 +72,43 @@ public class UserDao2 {
         return user;
     }
 
+    public List<User> findAll() throws ClassNotFoundException, SQLException {
+        //환경변수로 DB 설정(보안위해)
+        Map<String, String> env = System.getenv();
+        String dbHost = env.get("DB_HOST");
+        String dbUser = env.get("DB_USER");
+        String dbPassword = env.get("DB_PASSWORD");
+
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
+
+        PreparedStatement ps = conn.prepareStatement("SELECT * from users"); //sql문 템플릿
+
+        List<User> userList = new ArrayList<>();
+        ResultSet resultSet = ps.executeQuery();
+        while(resultSet.next()){
+            User user = new User(resultSet.getString("id"),resultSet.getString("name"),
+                    resultSet.getString("password"));
+            userList.add(user);
+        }
+
+        resultSet.close();
+        //connection끊기
+        ps.close();
+        conn.close();
+        return userList;
+    }
+
 
 
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
         UserDao2 userDao2 = new UserDao2();
-        User user = userDao2.getById("1");
-        System.out.printf("id : %s, name : %s, password : %s", user.getId(),user.getName(), user.getPassword());
+
+        List<User> userList = userDao2.findAll();
+        for (User user: userList) {
+            System.out.printf("id : %s, name : %s, password: %s\n", user.getId(), user.getName(), user.getPassword());
+        }
     }
 }
