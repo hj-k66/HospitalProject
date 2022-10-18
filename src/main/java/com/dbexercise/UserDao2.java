@@ -15,17 +15,24 @@ import java.util.Map;
 
 public class UserDao2 {
 
-
-    public void add(User user) throws SQLException, ClassNotFoundException, IOException {
-        //환경변수로 DB 설정(보안위해)
+    private Connection makeConnection() throws SQLException {
         Map<String, String> env = System.getenv();
         String dbHost = env.get("DB_HOST");
         String dbUser = env.get("DB_USER");
         String dbPassword = env.get("DB_PASSWORD");
+        Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
+
+        return conn;
+    }
+
+
+
+    public void add(User user) throws SQLException, ClassNotFoundException, IOException {
+        //환경변수로 DB 설정(보안위해)
+        Connection conn = makeConnection();
 
 
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
         PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id,name,password) values(?,?,?)"); //sql문 템플릿
         ps.setString(1,user.getId());
         ps.setString(2,user.getName());
@@ -39,14 +46,10 @@ public class UserDao2 {
 
     public User getById(String id) throws ClassNotFoundException, SQLException {
         //환경변수로 DB 설정(보안위해)
-        Map<String, String> env = System.getenv();
-        String dbHost = env.get("DB_HOST");
-        String dbUser = env.get("DB_USER");
-        String dbPassword = env.get("DB_PASSWORD");
+        Connection conn = makeConnection();
 
 
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
         PreparedStatement ps = conn.prepareStatement("SELECT * from users where id = ?"); //sql문 템플릿
         ps.setString(1,id);
 
