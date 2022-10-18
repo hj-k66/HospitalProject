@@ -11,7 +11,10 @@ public class UserDao2 {
 
     AwsConnectionMaker awsConnectionMaker = new AwsConnectionMaker();
 
-
+    //Constructor에서 초기화
+    public UserDao2() {
+        this.awsConnectionMaker = awsConnectionMaker;
+    }
 
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
         //환경변수로 DB 설정(보안위해)
