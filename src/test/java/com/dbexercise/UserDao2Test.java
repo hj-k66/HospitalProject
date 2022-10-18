@@ -13,7 +13,7 @@ class UserDao2Test {
     @Test
     void addAndSelect() throws SQLException, IOException, ClassNotFoundException {
         UserDao2 userDao2 = new UserDao2();
-        String id = "11";
+        String id = "12";
         User user = new User(id,"do","okokok");
         userDao2.add(user);
 

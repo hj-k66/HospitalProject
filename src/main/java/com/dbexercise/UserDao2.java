@@ -9,16 +9,20 @@ import java.util.List;
 
 public class UserDao2 {
 
-    AwsConnectionMaker awsConnectionMaker = new AwsConnectionMaker();
+    private ConnectionMaker connectionMaker;
 
     //Constructor에서 초기화
     public UserDao2() {
-        this.awsConnectionMaker = awsConnectionMaker;
+        this.connectionMaker = new AwsConnectionMaker();
+    }
+
+    public UserDao2(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
         //환경변수로 DB 설정(보안위해)
-        Connection conn = awsConnectionMaker.makeConnection();
+        Connection conn = connectionMaker.makeConnection();
 
 
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -35,7 +39,7 @@ public class UserDao2 {
 
     public User getById(String id) throws ClassNotFoundException, SQLException {
         //환경변수로 DB 설정(보안위해)
-        Connection conn = awsConnectionMaker.makeConnection();
+        Connection conn = connectionMaker.makeConnection();
 
 
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -57,7 +61,7 @@ public class UserDao2 {
     public List<User> findAll() throws ClassNotFoundException, SQLException {
         //환경변수로 DB 설정(보안위해)
 
-        Connection conn = awsConnectionMaker.makeConnection();
+        Connection conn = connectionMaker.makeConnection();
 
         PreparedStatement ps = conn.prepareStatement("SELECT * from users"); //sql문 템플릿
 
