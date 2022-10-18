@@ -1,35 +1,21 @@
 package com.dbexercise;
 
 import com.dbexercise.domain.User;
-import com.line.FileController;
-import com.line.domain.Hospital;
-import com.line.parser.HospitalParser;
-
-import java.awt.desktop.UserSessionListener;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
 
 public class UserDao2 {
 
-    private Connection makeConnection() throws SQLException {
-        Map<String, String> env = System.getenv();
-        String dbHost = env.get("DB_HOST");
-        String dbUser = env.get("DB_USER");
-        String dbPassword = env.get("DB_PASSWORD");
-        Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
-
-        return conn;
-    }
+    AwsConnectionMaker awsConnectionMaker = new AwsConnectionMaker();
 
 
 
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
         //환경변수로 DB 설정(보안위해)
-        Connection conn = makeConnection();
+        Connection conn = awsConnectionMaker.makeConnection();
 
 
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -46,7 +32,7 @@ public class UserDao2 {
 
     public User getById(String id) throws ClassNotFoundException, SQLException {
         //환경변수로 DB 설정(보안위해)
-        Connection conn = makeConnection();
+        Connection conn = awsConnectionMaker.makeConnection();
 
 
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -67,14 +53,8 @@ public class UserDao2 {
 
     public List<User> findAll() throws ClassNotFoundException, SQLException {
         //환경변수로 DB 설정(보안위해)
-        Map<String, String> env = System.getenv();
-        String dbHost = env.get("DB_HOST");
-        String dbUser = env.get("DB_USER");
-        String dbPassword = env.get("DB_PASSWORD");
 
-
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
+        Connection conn = awsConnectionMaker.makeConnection();
 
         PreparedStatement ps = conn.prepareStatement("SELECT * from users"); //sql문 템플릿
 
