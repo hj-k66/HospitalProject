@@ -16,7 +16,7 @@ import java.util.Map;
 public class UserDao2 {
 
 
-    public void add() throws SQLException, ClassNotFoundException, IOException {
+    public void add(User user) throws SQLException, ClassNotFoundException, IOException {
         //환경변수로 DB 설정(보안위해)
         Map<String, String> env = System.getenv();
         String dbHost = env.get("DB_HOST");
@@ -26,22 +26,12 @@ public class UserDao2 {
 
         Class.forName("com.mysql.cj.jdbc.Driver");
         Connection conn = DriverManager.getConnection(dbHost, dbUser, dbPassword);  //db연동
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO seoul_hospital(id,address,district,category,emergency_room,name,subdivision) VALUES(?,?,?,?,?,?,?)"); //sql문 템플릿
-        FileController<Hospital> fileController = new FileController<>(new HospitalParser());
-        String filename = "C:\\Users\\user\\Downloads\\seoul_hospital_location.csv";
-        List<Hospital> hospitals = fileController.readAndParse(filename);
+        PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id,name,password) values(?,?,?)"); //sql문 템플릿
+        ps.setString(1,user.getId());
+        ps.setString(2,user.getName());
+        ps.setString(3,user.getPassword());
 
-        for(Hospital hospital : hospitals){
-            ps.setString(1,hospital.getId());
-            ps.setString(2, hospital.getAddress());
-            ps.setString(3, hospital.getDistrict());
-            ps.setString(4, hospital.getCategory());
-            ps.setInt(5,hospital.getEmergencyRoom());
-            ps.setString(6, hospital.getName());
-            ps.setString(7,hospital.getSubdivision());
-            ps.executeUpdate();
-        }
-
+        ps.executeUpdate(); //Mysql workbench에서 ctrl + enter와 유사
         //connection끊기
         ps.close();
         conn.close();
@@ -105,10 +95,10 @@ public class UserDao2 {
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
         UserDao2 userDao2 = new UserDao2();
-
-        List<User> userList = userDao2.findAll();
-        for (User user: userList) {
-            System.out.printf("id : %s, name : %s, password: %s\n", user.getId(), user.getName(), user.getPassword());
-        }
+        userDao2.add(new User( "7","park","asdf"));
+//        List<User> userList = userDao2.findAll();
+//        for (User user: userList) {
+//            System.out.printf("id : %s, name : %s, password: %s\n", user.getId(), user.getName(), user.getPassword());
+//        }
     }
 }
