@@ -12,8 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserDao2Test {
     @Test
     void addAndSelect() throws SQLException, IOException, ClassNotFoundException {
-        UserDao2 userDao2 = new UserDao2();
-        String id = "12";
+//        UserDao2 userDao2 = new UserDao2(new AwsConnectionMaker());
+        UserDao2 userDao2 = new UserDaoFactory().awsUserDao();
+        String id = "14";
         User user = new User(id,"do","okokok");
         userDao2.add(user);
 
