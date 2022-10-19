@@ -1,11 +1,12 @@
-package com.dbexercise;
+package com.dbexercise.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class AwsConnectionMaker implements ConnectionMaker{
+public class AWSUserDaoImpl extends UserDaoAbstract{
+    @Override
     public Connection makeConnection() throws SQLException {
         Map<String, String> env = System.getenv();
         String dbHost = env.get("DB_HOST");
@@ -15,5 +16,4 @@ public class AwsConnectionMaker implements ConnectionMaker{
 
         return conn;
     }
-
 }

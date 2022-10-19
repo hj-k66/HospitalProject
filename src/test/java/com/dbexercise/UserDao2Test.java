@@ -1,13 +1,13 @@
 package com.dbexercise;
 
+import com.dbexercise.dao.UserDao2;
+import com.dbexercise.dao.UserDaoFactory;
 import com.dbexercise.domain.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserDao2Test {
     @Test
