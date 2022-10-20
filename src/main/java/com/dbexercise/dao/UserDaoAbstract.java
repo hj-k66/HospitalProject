@@ -83,8 +83,8 @@ public abstract class UserDaoAbstract {
 
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
-        UserDao2 userDao2 = new UserDao2();
-        userDao2.add(new User( "7","park","asdf"));
+        UserDao userDao = new UserDao();
+        userDao.add(new User( "7","park","asdf"));
 //        List<User> userList = userDao2.findAll();
 //        for (User user: userList) {
 //            System.out.printf("id : %s, name : %s, password: %s\n", user.getId(), user.getName(), user.getPassword());

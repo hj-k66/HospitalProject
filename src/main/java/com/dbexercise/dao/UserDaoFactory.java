@@ -8,15 +8,15 @@ public class UserDaoFactory {
     //관계 설정 기능
     //조립하기
     @Bean
-    public UserDao2 awsUserDao(){
+    public UserDao awsUserDao(){
         AwsConnectionMaker awsConnectionMaker = new AwsConnectionMaker();
-        UserDao2 userDao2 = new UserDao2(awsConnectionMaker);
-        return userDao2;
+        UserDao userDao = new UserDao(awsConnectionMaker);
+        return userDao;
     }
     @Bean
-    public UserDao2 localUserDao(){
-        UserDao2 userDao2 = new UserDao2(new LocalConnectionMaker());
-        return userDao2;
+    public UserDao localUserDao(){
+        UserDao userDao = new UserDao(new LocalConnectionMaker());
+        return userDao;
     }
 
 }

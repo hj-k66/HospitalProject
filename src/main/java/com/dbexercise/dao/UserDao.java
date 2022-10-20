@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class UserDao2 {
+public class UserDao {
 
     private ConnectionMaker connectionMaker;
 
     //Constructor에서 초기화
-    public UserDao2() {
+    public UserDao() {
         this.connectionMaker = new AwsConnectionMaker();
     }
 
-    public UserDao2(ConnectionMaker connectionMaker) {
+    public UserDao(ConnectionMaker connectionMaker) {
         this.connectionMaker = connectionMaker;
     }
 
@@ -111,8 +111,8 @@ public class UserDao2 {
 
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
-        UserDao2 userDao2 = new UserDao2();
-        userDao2.add(new User( "7","park","asdf"));
+        UserDao userDao = new UserDao();
+        userDao.add(new User( "7","park","asdf"));
 //        List<User> userList = userDao2.findAll();
 //        for (User user: userList) {
 //            System.out.printf("id : %s, name : %s, password: %s\n", user.getId(), user.getName(), user.getPassword());
