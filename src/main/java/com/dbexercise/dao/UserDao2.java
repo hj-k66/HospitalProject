@@ -20,6 +20,33 @@ public class UserDao2 {
         this.connectionMaker = connectionMaker;
     }
 
+    public void deleteAll() throws SQLException {
+        Connection conn = connectionMaker.makeConnection();
+
+        PreparedStatement ps = conn.prepareStatement("DELETE from users");
+        ps.executeUpdate();
+
+        ps.close();
+        conn.close();
+    }
+
+    public int getCount() throws SQLException {
+        Connection conn = connectionMaker.makeConnection();
+
+        PreparedStatement ps = conn.prepareStatement("SELECT count(*) FROM users");
+
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+
+        //close
+        rs.close();
+        ps.close();
+        conn.close();
+
+        return count;
+    }
+
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
         //환경변수로 DB 설정(보안위해)
         Connection conn = connectionMaker.makeConnection();
