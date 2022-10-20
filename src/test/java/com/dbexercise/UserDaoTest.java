@@ -22,9 +22,15 @@ class UserDaoTest {
     ApplicationContext context;
 
     UserDao userDao;
+    User user1;
+    User user2;
+    User user3;
     @BeforeEach
     void setUp(){
-        userDao = context.getBean("awsUserDao", UserDao.class);
+        this.userDao = context.getBean("awsUserDao", UserDao.class);
+        this.user1 = new User("1","김희정","123456");
+        this.user2 = new User("2","라이언","qwer");
+        this.user3 = new User("3","멋쟁이","asdf");
     }
     @Test
     void addAndSelect() throws SQLException, IOException, ClassNotFoundException {
@@ -44,9 +50,6 @@ class UserDaoTest {
 
     @Test
     void count() throws SQLException, IOException, ClassNotFoundException {
-        User user1 = new User("1","김희정","123456");
-        User user2 = new User("2","라이언","qwer");
-        User user3 = new User("3","멋쟁이","asdf");
 
         userDao.deleteAll();
         Assertions.assertEquals(0, userDao.getCount());

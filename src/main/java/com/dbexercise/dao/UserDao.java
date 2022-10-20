@@ -23,30 +23,69 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection conn = connectionMaker.makeConnection();
-
-        PreparedStatement ps = conn.prepareStatement("DELETE from users");
-        ps.executeUpdate();
-
-        ps.close();
-        conn.close();
+        Connection conn = null;
+        PreparedStatement ps = null
+        try {
+            conn = connectionMaker.makeConnection();
+            ps = conn.prepareStatement("DELETE from users");
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally { //에러가 나도 실행 >> close
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
 
     public int getCount() throws SQLException {
-        Connection conn = connectionMaker.makeConnection();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
 
-        PreparedStatement ps = conn.prepareStatement("SELECT count(*) FROM users");
+        try {
+            conn = connectionMaker.makeConnection();
 
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        int count = rs.getInt(1);
+            ps = conn.prepareStatement("SELECT count(*) FROM users");
 
-        //close
-        rs.close();
-        ps.close();
-        conn.close();
+            rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            //close
+            //close()는 만들어진 순서 반대로
+            if(rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(ps != null){
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
 
-        return count;
+
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
