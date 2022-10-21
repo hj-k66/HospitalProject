@@ -24,10 +24,11 @@ public class UserDao {
 
     public void deleteAll() throws SQLException {
         Connection conn = null;
-        PreparedStatement ps = null
+        PreparedStatement ps = null;
         try {
             conn = connectionMaker.makeConnection();
-            ps = conn.prepareStatement("DELETE from users");
+            ps = new DeleteAllStrategy().makePreparedStatement(conn);
+//            ps = conn.prepareStatement("DELETE from users");
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -84,8 +85,6 @@ public class UserDao {
                 }
             }
         }
-
-
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
