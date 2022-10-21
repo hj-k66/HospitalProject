@@ -91,20 +91,8 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
-        //환경변수로 DB 설정(보안위해)
-        Connection conn = connectionMaker.makeConnection();
-
-
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO users(id,name,password) values(?,?,?)"); //sql문 템플릿
-        ps.setString(1,user.getId());
-        ps.setString(2,user.getName());
-        ps.setString(3,user.getPassword());
-
-        ps.executeUpdate(); //Mysql workbench에서 ctrl + enter와 유사
-        //connection끊기
-        ps.close();
-        conn.close();
+        AddStrategy addStrategy = new AddStrategy(user);
+        jdbcContextWithStatementStrategy(addStrategy);
     }
 
     public User getById(String id) throws ClassNotFoundException, SQLException {
