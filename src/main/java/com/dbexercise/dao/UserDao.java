@@ -22,9 +22,9 @@ public class UserDao {
     }
 
 
-
     public void deleteAll() throws SQLException{
-        jdbcContext.workWithStatementStrategy(connection -> connection.prepareStatement("delete from users"));
+        //쿼리만 넘김
+        this.jdbcContext.executeSQL("DELETE from users");
     }
 
     public int getCount() throws SQLException {
