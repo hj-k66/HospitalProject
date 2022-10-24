@@ -2,6 +2,8 @@ package com.dbexercise.dao;
 
 import com.dbexercise.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -11,118 +13,49 @@ import java.util.List;
 
 
 public class UserDao {
-    private final JdbcContext jdbcContext;
+    private final JdbcTemplate jdbcTemplate;
 
-    private final DataSource dataSource;
 
     //Constructor에서 초기화
     public UserDao(DataSource dataSource) {
-        this.dataSource = dataSource;
-        this.jdbcContext = new JdbcContext(dataSource);
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
 
-    public void deleteAll() throws SQLException{
+    public void deleteAll() {
         //쿼리만 넘김
-        this.jdbcContext.executeSQL("DELETE from users");
+        this.jdbcTemplate.update("DELETE from users");
     }
 
-    public int getCount() throws SQLException {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+    public int getCount() {
+     return this.jdbcTemplate.queryForObject("SELECT count(*) from users", Integer.class);
+    }
 
-        try {
-            conn = dataSource.getConnection();
+    public void add(User user) {
+        this.jdbcTemplate.update("INSERT INTO users(id,name,password) values(?,?,?)",
+                user.getId(), user.getName(), user.getPassword());
+    }
 
-            ps = conn.prepareStatement("SELECT count(*) FROM users");
-
-            rs = ps.executeQuery();
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            //close
-            //close()는 만들어진 순서 반대로
-            if(rs != null){
-                try {
-                    rs.close();
-                } catch (SQLException e) {
-                }
+    public User getById(String id){
+        RowMapper<User> rowMapper = new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User user = new User(rs.getString("id"), rs.getString("name"), rs.getString("password"));
+                return user;
             }
-            if(ps != null){
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
+        };
+        return this.jdbcTemplate.queryForObject("SELECT * from users where id = ?",rowMapper,id);
+    }
+
+    public List<User> findAll(){
+        RowMapper<User> rowMapper = new RowMapper<User>() {
+            @Override
+            public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+                User user = new User(rs.getString("id"), rs.getString("name"), rs.getString("password"));
+                return user;
             }
-            if(conn != null){
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
-
-    public void add(User user) throws SQLException, ClassNotFoundException, IOException {
-        jdbcContext.workWithStatementStrategy(connection -> {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO users(id,name,password) values(?,?,?)"); //sql문 템플릿
-            ps.setString(1,user.getId());
-            ps.setString(2,user.getName());
-            ps.setString(3,user.getPassword());
-            return ps;
-        });
-    }
-
-    public User getById(String id) throws ClassNotFoundException, SQLException {
-        //환경변수로 DB 설정(보안위해)
-        Connection conn = dataSource.getConnection();
-
-
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        PreparedStatement ps = conn.prepareStatement("SELECT * from users where id = ?"); //sql문 템플릿
-        ps.setString(1,id);
-
-        ResultSet resultSet = ps.executeQuery();
-        User user = null;
-        if(resultSet.next()){
-            user = new User(resultSet.getString("id"),resultSet.getString("name"),
-                    resultSet.getString("password"));
-        }
-
-        //close
-        resultSet.close();
-        ps.close();
-        conn.close();
-
-        if(user == null){
-            throw new EmptyResultDataAccessException(1);
-        }
-        return user;
-    }
-
-    public List<User> findAll() throws ClassNotFoundException, SQLException {
-        //환경변수로 DB 설정(보안위해)
-
-        Connection conn = dataSource.getConnection();
-
-        PreparedStatement ps = conn.prepareStatement("SELECT * from users"); //sql문 템플릿
-
-        List<User> userList = new ArrayList<>();
-        ResultSet resultSet = ps.executeQuery();
-        while(resultSet.next()){
-            User user = new User(resultSet.getString("id"),resultSet.getString("name"),
-                    resultSet.getString("password"));
-            userList.add(user);
-        }
-
-        resultSet.close();
-        //connection끊기
-        ps.close();
-        conn.close();
-        return userList;
+        };
+        return this.jdbcTemplate.query("SELECT * from users",rowMapper);
     }
 
 

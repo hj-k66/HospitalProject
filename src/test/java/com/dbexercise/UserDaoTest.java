@@ -15,6 +15,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = UserDaoFactory.class)
 class UserDaoTest {
@@ -33,7 +35,19 @@ class UserDaoTest {
         this.user3 = new User("3","멋쟁이","asdf");
     }
     @Test
-    void addAndSelect() throws SQLException, IOException, ClassNotFoundException {
+    void findAll() {
+        userDao.deleteAll();
+        List<User> userList = userDao.findAll();
+        Assertions.assertEquals(0,userList.size());
+        userDao.add(user1);
+        userDao.add(user2);
+        userDao.add(user3);
+        userList = userDao.findAll();
+        Assertions.assertEquals(3, userList.size());
+
+    }
+    @Test
+    void addAndSelect() {
         User user = new User("1","김희정","123456789");
 
         userDao.deleteAll();
@@ -49,7 +63,7 @@ class UserDaoTest {
     }
 
     @Test
-    void count() throws SQLException, IOException, ClassNotFoundException {
+    void count(){
 
         userDao.deleteAll();
         Assertions.assertEquals(0, userDao.getCount());
