@@ -3,6 +3,7 @@ package com.dbexercise.dao;
 import com.dbexercise.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,22 +12,18 @@ import java.util.List;
 
 public class UserDao {
 
-    private ConnectionMaker connectionMaker;
+    private final DataSource dataSource;
 
     //Constructor에서 초기화
-    public UserDao() {
-        this.connectionMaker = new AwsConnectionMaker();
-    }
-
-    public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public UserDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void jdbcContextWithStatementStrategy(StatementStrategy stmt){
         Connection conn = null;
         PreparedStatement ps = null;
         try {
-            conn = connectionMaker.makeConnection();
+            conn = dataSource.getConnection();
             ps = stmt.makePreparedStatement(conn);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -62,7 +59,7 @@ public class UserDao {
         ResultSet rs = null;
 
         try {
-            conn = connectionMaker.makeConnection();
+            conn = dataSource.getConnection();
 
             ps = conn.prepareStatement("SELECT count(*) FROM users");
 
@@ -110,7 +107,7 @@ public class UserDao {
 
     public User getById(String id) throws ClassNotFoundException, SQLException {
         //환경변수로 DB 설정(보안위해)
-        Connection conn = connectionMaker.makeConnection();
+        Connection conn = dataSource.getConnection();
 
 
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -138,7 +135,7 @@ public class UserDao {
     public List<User> findAll() throws ClassNotFoundException, SQLException {
         //환경변수로 DB 설정(보안위해)
 
-        Connection conn = connectionMaker.makeConnection();
+        Connection conn = dataSource.getConnection();
 
         PreparedStatement ps = conn.prepareStatement("SELECT * from users"); //sql문 템플릿
 
@@ -158,14 +155,4 @@ public class UserDao {
     }
 
 
-
-
-    public static void main(String[] args) throws SQLException, ClassNotFoundException, IOException {
-        UserDao userDao = new UserDao();
-        userDao.add(new User( "7","park","asdf"));
-//        List<User> userList = userDao2.findAll();
-//        for (User user: userList) {
-//            System.out.printf("id : %s, name : %s, password: %s\n", user.getId(), user.getName(), user.getPassword());
-//        }
-    }
 }
