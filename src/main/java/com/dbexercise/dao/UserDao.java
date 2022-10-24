@@ -11,46 +11,20 @@ import java.util.List;
 
 
 public class UserDao {
+    private final JdbcContext jdbcContext;
 
     private final DataSource dataSource;
 
     //Constructor에서 초기화
     public UserDao(DataSource dataSource) {
         this.dataSource = dataSource;
+        this.jdbcContext = new JdbcContext(dataSource);
     }
 
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt){
-        Connection conn = null;
-        PreparedStatement ps = null;
-        try {
-            conn = dataSource.getConnection();
-            ps = stmt.makePreparedStatement(conn);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally { //에러가 나도 실행 >> close
-            if(ps != null){
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if(conn != null){
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
-    }
+
 
     public void deleteAll() throws SQLException{
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection connection) throws SQLException {
-                return connection.prepareStatement("delete from users");
-            }
-        });
+        jdbcContext.workWithStatementStrategy(connection -> connection.prepareStatement("delete from users"));
     }
 
     public int getCount() throws SQLException {
@@ -93,15 +67,12 @@ public class UserDao {
     }
 
     public void add(User user) throws SQLException, ClassNotFoundException, IOException {
-        jdbcContextWithStatementStrategy(new StatementStrategy() {
-            @Override
-            public PreparedStatement makePreparedStatement(Connection connection) throws SQLException {
-                PreparedStatement ps = connection.prepareStatement("INSERT INTO users(id,name,password) values(?,?,?)"); //sql문 템플릿
-                ps.setString(1,user.getId());
-                ps.setString(2,user.getName());
-                ps.setString(3,user.getPassword());
-                return ps;
-            }
+        jdbcContext.workWithStatementStrategy(connection -> {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO users(id,name,password) values(?,?,?)"); //sql문 템플릿
+            ps.setString(1,user.getId());
+            ps.setString(2,user.getName());
+            ps.setString(3,user.getPassword());
+            return ps;
         });
     }
 
